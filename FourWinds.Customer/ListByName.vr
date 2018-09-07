@@ -1,0 +1,208 @@
+﻿
+// <input action="action" onclick="window.history.go(-1); return false;" type="button" value="Back to members list" />
+// ---
+// This class is an example of externalizing data access from an application. This provides a separation of concerns
+// between application specific operations and those that are repeatable and reusable. The advantages this provides
+// are:
+//
+// * This class can be used in any project that needs a navigation list over a customer file. 
+// * This class can be used by either Windows, web, or even web services applications. 
+// * This class can be consumed by VB.NET, C#, or AVR. A common use of AVR is to empower RPG programmers
+//   to create IBM i-specific file operation and business logic classes that can later be consumed by C#
+//   programmers. This lets the C# programmers have effective access to the IBM i without needing to learn 
+//   its nuances, its RPG's record level access model, or worry about acquiring, configuring, and keeping the
+//   ADO.NET data provide up and running. 
+// * This (rather simplistic) class passes list data to its consuming project as a System.Data.DataTable. It may 
+//   be desirable to use a generic List of Customer object or an array of Customer objects as an alternative 
+//   to the DataTable. However, the DataTable is quite servicable, especially in Windows applications.  
+// ---
+
+// Namespace declarations.
+
+Using System
+Using System.Text
+Using System.Data 
+
+// Namespaces organize code into specific regions. It's common to have the first 
+// part of the namespace be your company name. The second part defines the general 
+// subject of the namespace (think System.Data or System.Math). There may be other 
+// parts that further qualify the namespace. See [this Microsoft article](https://goo.gl/GfsjES)
+// for info on namespace naming conventions. 
+//
+// By default the namespace is the same as the name of the project, but it doesn't have to 
+// be. 
+DclNamespace FourWinds.Customer
+
+// Namespaces may contain many classes. This class provides list-by-name capabilities for a 
+// customer file indexed by customer name and customer number. This class is intended to 
+// populate a grid; in Windows this would usually be a DataGridView and in ASP.NET it would 
+// probably be a GridView or a ListView.
+BegClass ListByName Access(*Public)
+
+    // This is the compile time database object. It is overridden at runtime. 
+    DclDB pgmDB DBName("*PUBLIC/DG NET Local")
+
+    // The customer file for which this class provides listing capabilities. 
+    DclDiskFile  CustomerByName +
+          Type(*Input ) +
+          Org(*Indexed) +
+          Prefix(CustomerByName_) +
+          File("Examples/CMastNewL2") +
+          DB(pgmDB) +
+          ImpOpen(*No)
+
+    // This memory file's definition is based on the same file as the DclDiskFile above
+    // For files with small record formats, this is file. However, if your file's record
+    // format has many fields, it's probably better to use a [program-described memory 
+    // file](https://goo.gl/oYAHfr) to limit the data you're moving across the network. 
+    // to limit 
+    DclMemoryFile CustomerByNameMF +
+          DBDesc("*PUBLIC/DG NET Local") +
+          Prefix(CustomerByName_) +
+          FileDesc("Examples/CMastNewL2") +
+          ImpOpen(*Yes) +
+          RnmFmt(CustomerMF)
+
+    // This is a global, private field that governs the maximum number of rows returned.
+    DclFld RecordsToRead Type(*Integer4) 
+
+    // These two properties store the last name and number of the last record read in the `GetList`
+    // routine.
+    DclProp LastCMName Type(*String) Access(*Public) 
+    DclProp LastCMCustNo Type(*Integer4) Access(*Public) 
+
+    // This property indicates if there are more records foward to read. 
+    DclProp HasMoreRecords Type(*Boolean) Access(*Public)
+
+    // This is one of two overloaded constructors this class provides. This is generally the 
+    // one used when populating a list. It needs the database object that will override this 
+    // classes compile-time database object and the maximum number of rows to return passed 
+    // to it. 
+    BegConstructor Access(*Public)
+        DclSrParm pgmDB Type(ASNA.VisualRPG.Runtime.Database)
+        DclSrParm RecordsToRead Type(*Integer4)
+
+        // Assign the database object reference passed in to this class's database object. This 
+        // effectively replaces this class's database object with a different one at runtime. 
+        *This.pgmDB = pgmDB
+        *This.RecordsToRead = RecordsToRead
+    EndConstructor
+
+    // This is the other overloaded constructor this class provides. It receives the database 
+    // object like the other one does but defaults the rows return to 12. The `This(pgmDB, 12)`
+    // tells this constructor to call the constructor above (the one that requires two arguments)   
+    BegConstructor Access(*Public) This(pgmDB, 12)
+        DclSrParm pgmDB Type(ASNA.VisualRPG.Runtime.Database)        
+    EndConstructor
+
+    // Connect the database object. Remember that by the time this is called, this class's intrinsic 
+    // database object has been overridden by the one passed into the class's constructor. No 
+    // error handling has been provided here. You should either add some here or be sure to 
+    // watch for an exeception when you use this method from a consumer. 
+    BegSr ConnectDB Access(*Public)
+        // The database passed into the constructor may have already been opened.         
+        If (NOT pgmDB.IsOpen)
+            Connect pgmDB
+        EndIf
+    EndSr
+
+    // Open the CustomerByName file. 
+    BegSr OpenFiles Access(*Public)
+        Open CustomerByName
+    EndSr
+
+    // Close this classe's files. It's a best practice to always use `Close *All` to ensure 
+    // you're closing all the files this class opened. Currently, this class has just the one 
+    // file but you may add others later and having used `Close *All` you don't need to worry 
+    // about keeping track of what files you've opened.  
+    BegSr CloseFiles Access(*Public)
+        Close *All
+    EndSr
+
+    // Disconnect the database object. 
+    BegSr DisconnectDB Access(*Public)
+        Disconnect *This.pgmDB
+    EndSr
+
+    // Clear the memory file's zeroth (its only!) DataTable. 
+    BegSr ClearList Access(*Public) 
+        CustomerByNameMF.DataSet.Tables[0].Clear()
+    EndSr 
+
+    // Return populated datatable. The records returned 
+    // are read from the current file pointer position as 
+    // set by either `PositionTo`, `PositionToNext`, or `PositionToFirst`.
+    // Separating the positioning of the file pointer from this 
+    // method makes it very flexible. It is *always* used to 
+    // to return the list. 
+    // Note that this class *does not* persist record position 
+    // state. You should always call one of the `PositionTo` methods 
+    // before calling `GetList`. This statelessness is so this class
+    // works in web apps as well as it does in Windows apps. 
+    BegFunc GetList Type(DataTable) Access(*Public) 
+        // Read up to the number of records governed by the global 
+        // `RecordsToRead` field. The number of rows read may be 
+        // less if EOF occurs. 
+        Do FromVal(1) ToVal(*This.RecordsToRead)
+            Read CustomerByName
+            If (CustomerByName.IsEof)
+                Leave
+            EndIf
+            // The memory file has exactly the same field names as the 
+            // data file record format, so no intermediate field assignments
+            // are needed. 
+            Write CustomerByNameMF
+        EndDo
+
+        // Save this last customer name and number read. This values can later
+        // be passed to one of the `PositionTo` methods for the next 'page'
+        // of customers. 
+        *This.LastCMName = CustomerByName_CMName
+        *This.LastCMCustNo = CustomerByName_CMCustNo
+
+        // Check to see if there are more records avaiable. 
+        //CheckForMoreRecords()
+
+        // Read the next record to see if there are more records to read. 
+        Read CustomerByName 
+        *This.HasMoreRecords = NOT CustomerByName.IsEof 
+
+        // Return a reference to the MemoryFile's zerroth table (its only table). 
+        LeaveSr CustomerByNameMF.DataSet.Tables[0]
+    EndFunc
+
+    // Position the file pointer at a given key value (in this case name and number) 
+    // with `SetLL` to ensure the next record read is that record. 
+    BegFunc PositionTo Access(*Public) Type(*Boolean) 
+        DclSrParm CMName Type(*String) 
+        DclSrParm CMCustNo Type(*Integer4) 
+
+        SetLL CustomerByName Key(CMName, CMCustNo) 
+        LeaveSr CustomerByName.IsFound()
+    EndFunc 
+
+    // Position the file pointer at a given key value (in this case name and number)  
+    // with Chain to ensure the next read will be the record *after* the name and number 
+    // values given. 
+    BegFunc PositionToNext Access(*Public) Type(*Boolean) 
+        DclSrParm CMName Type(*String) 
+        DclSrParm CMCustNo Type(*Integer4) 
+
+        Chain CustomerByName Key(CMName, CMCustNo) 
+        LeaveSr CustomerByName.IsFound()
+    EndFunc 
+
+    // Position the file pointer at the top of the file. The next record read will be 
+    // the first record in the file. 
+    BegSr PositionToFirst Access(*Public) 
+        SetLL CustomerByName Key(*Start) 
+    EndSr 
+
+    // Attempt to read the next record 
+    BegSr CheckForMoreRecords 
+        SetGT CustomerByName Key(*This.LastCMName, *This.LastCMCustNo) 
+
+        *This.HasMoreRecords = CustomerByName.IsFound
+    EndSr
+
+EndClass

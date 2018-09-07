@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>ListByName.vr</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>ListByName.vr</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h2><input action="action" onclick="window.history.go(-1); return false;" type="button" value="Back to members list" /></h2>
+<p>This class is an example of externalizing data access from an application. This provides a separation of concerns
+between application specific operations and those that are repeatable and reusable. The advantages this provides
+are:</p>
+<ul>
+<li>This class can be used in any project that needs a navigation list over a customer file. </li>
+<li>This class can be used by either Windows, web, or even web services applications. </li>
+<li>This class can be consumed by VB.NET, C#, or AVR. A common use of AVR is to empower RPG programmers
+  to create IBM i-specific file operation and business logic classes that can later be consumed by C#
+  programmers. This lets the C# programmers have effective access to the IBM i without needing to learn 
+  its nuances, its RPG's record level access model, or worry about acquiring, configuring, and keeping the
+  ADO.NET data provide up and running. </li>
+<li>This (rather simplistic) class passes list data to its consuming project as a System.Data.DataTable. It may 
+  be desirable to use a generic List of Customer object or an array of Customer objects as an alternative 
+  to the DataTable. However, the DataTable is quite servicable, especially in Windows applications.  </li>
+</ul>
+<hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Namespace declarations.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nx">Using</span> <span class="nx">System</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Text</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Data</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Namespaces organize code into specific regions. It's common to have the first 
+part of the namespace be your company name. The second part defines the general 
+subject of the namespace (think System.Data or System.Math). There may be other 
+parts that further qualify the namespace. See <a href="https://goo.gl/GfsjES">this Microsoft article</a>
+for info on namespace naming conventions. </p>
+<p>By default the namespace is the same as the name of the project, but it doesn't have to 
+be. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nx">DclNamespace</span> <span class="nx">FourWinds</span><span class="p">.</span><span class="nx">Customer</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Namespaces may contain many classes. This class provides list-by-name capabilities for a 
+customer file indexed by customer name and customer number. This class is intended to 
+populate a grid; in Windows this would usually be a DataGridView and in ASP.NET it would 
+probably be a GridView or a ListView.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nx">BegClass</span> <span class="nx">ListByName</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>This is the compile time database object. It is overridden at runtime. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclDB</span> <span class="nx">pgmDB</span> <span class="nx">DBName</span><span class="p">(</span> <span class="s2">&quot;*PUBLIC/DG NET Local&quot;</span> <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>The customer file for which this class provides listing capabilities. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclDiskFile</span>  <span class="nx">CustomerByName</span> <span class="o">+</span>
+          <span class="nx">Type</span><span class="p">(</span> <span class="o">*</span><span class="nx">Input</span>  <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">Org</span><span class="p">(</span> <span class="o">*</span><span class="nx">Indexed</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">Prefix</span><span class="p">(</span> <span class="nx">CustomerByName_</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">File</span><span class="p">(</span> <span class="s2">&quot;Examples/CMastNewL2&quot;</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">DB</span><span class="p">(</span> <span class="nx">pgmDB</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">ImpOpen</span><span class="p">(</span> <span class="o">*</span><span class="nx">No</span> <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>This memory file's definition is based on the same file as the DclDiskFile above
+For files with small record formats, this is file. However, if your file's record
+format has many fields, it's probably better to use a <a href="https://goo.gl/oYAHfr">program-described memory 
+file</a> to limit the data you're moving across the network. 
+to limit </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclMemoryFile</span> <span class="nx">CustomerByNameMF</span> <span class="o">+</span>
+          <span class="nx">DBDesc</span><span class="p">(</span> <span class="s2">&quot;*PUBLIC/DG NET Local&quot;</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">Prefix</span><span class="p">(</span> <span class="nx">CustomerByName_</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">FileDesc</span><span class="p">(</span> <span class="s2">&quot;Examples/CMastNewL2&quot;</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">ImpOpen</span><span class="p">(</span> <span class="o">*</span><span class="nx">Yes</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">RnmFmt</span><span class="p">(</span> <span class="nx">CustomerMF</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>This is a global, private field that governs the maximum number of rows returned.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclFld</span> <span class="nx">RecordsToRead</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+
+    <span class="nx">DclProp</span> <span class="nx">LastCMName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+    <span class="nx">DclProp</span> <span class="nx">LastCMCustNo</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+    <span class="nx">DclProp</span> <span class="nx">HasMoreRecords</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Boolean</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>This is one of two overloaded constructors this class provides. This is generally the 
+one used when populating a list. It needs the database object that will override this 
+classes compile-time database object and the maximum number of rows to return passed 
+to it. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegConstructor</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">pgmDB</span> <span class="nx">Type</span><span class="p">(</span> <span class="nx">ASNA</span><span class="p">.</span><span class="nx">VisualRPG</span><span class="p">.</span><span class="nx">Runtime</span><span class="p">.</span><span class="nx">Database</span> <span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">RecordsToRead</span> <span class="nx">Type</span><span class="p">(</span> <span class="o">*</span><span class="nx">Integer4</span> <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>Assign the database object reference passed in to this class's database object. This 
+effectively replaces this class's database object with a different one at runtime. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">pgmDB</span> <span class="o">=</span> <span class="nx">pgmDB</span>
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">RecordsToRead</span> <span class="o">=</span> <span class="nx">RecordsToRead</span>
+    <span class="nx">EndConstructor</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>This is the other overloaded constructor this class provides. It receives the database 
+object like the other one does but defaults the rows return to 12. The <code>This(pgmDB, 12)</code>
+tells this constructor to call the constructor above (the one that requires two arguments)   </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegConstructor</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> <span class="nx">This</span><span class="p">(</span><span class="nx">pgmDB</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">pgmDB</span> <span class="nx">Type</span><span class="p">(</span> <span class="nx">ASNA</span><span class="p">.</span><span class="nx">VisualRPG</span><span class="p">.</span><span class="nx">Runtime</span><span class="p">.</span><span class="nx">Database</span> <span class="p">)</span>        
+    <span class="nx">EndConstructor</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Connect the database object. Remember that by the time this is called, this class's intrinsic 
+database object has been overridden by the one passed into the class's constructor. No 
+error handling has been provided here. You should either add some here or be sure to 
+watch for an exeception when you use this method from a consumer. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegSr</span> <span class="nx">ConnectDB</span> <span class="nx">Access</span><span class="p">(</span> <span class="o">*</span><span class="nx">Public</span> <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>The database passed into the constructor may have already been opened.         </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">If</span> <span class="p">(</span><span class="nx">NOT</span> <span class="nx">pgmDB</span><span class="p">.</span><span class="nx">IsOpen</span><span class="p">)</span>
+            <span class="nx">Connect</span> <span class="nx">pgmDB</span>
+        <span class="nx">EndIf</span>
+    <span class="nx">EndSr</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Open the CustomerByName file. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegSr</span> <span class="nx">OpenFiles</span> <span class="nx">Access</span><span class="p">(</span> <span class="o">*</span><span class="nx">Public</span> <span class="p">)</span>
+        <span class="nx">Open</span> <span class="nx">CustomerByName</span>
+    <span class="nx">EndSr</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>Close this classe's files. It's a best practice to always use <code>Close *All</code> to ensure 
+you're closing all the files this class opened. Currently, this class has just the one 
+file but you may add others later and having used <code>Close *All</code> you don't need to worry 
+about keeping track of what files you've opened.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegSr</span> <span class="nx">CloseFiles</span> <span class="nx">Access</span><span class="p">(</span> <span class="o">*</span><span class="nx">Public</span> <span class="p">)</span>
+        <span class="nx">Close</span> <span class="o">*</span><span class="nx">All</span>
+    <span class="nx">EndSr</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Disconnect the database object. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegSr</span> <span class="nx">DisconnectDB</span> <span class="nx">Access</span><span class="p">(</span> <span class="o">*</span><span class="nx">Public</span> <span class="p">)</span>
+        <span class="nx">Disconnect</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">pgmDB</span>
+    <span class="nx">EndSr</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p>Clear the memory file's zeroth (its only!) DataTable. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegSr</span> <span class="nx">ClearList</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">CustomerByNameMF</span><span class="p">.</span><span class="nx">DataSet</span><span class="p">.</span><span class="nx">Tables</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Clear</span><span class="p">()</span>
+    <span class="nx">EndSr</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Return populated datatable. The records returned 
+are read from the current file pointer position as 
+set by either <code>PositionTo</code>, <code>PositionToNext</code>, or <code>PositionToFirst</code>.
+Separating the positioning of the file pointer from this 
+method makes it very flexible. It is <strong>always</strong> used to 
+to return the list. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegFunc</span> <span class="nx">GetList</span> <span class="nx">Type</span><span class="p">(</span> <span class="nx">DataTable</span> <span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">Do</span> <span class="nx">FromVal</span><span class="p">(</span> <span class="mi">1</span> <span class="p">)</span> <span class="nx">ToVal</span><span class="p">(</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">RecordsToRead</span> <span class="p">)</span>
+            <span class="nx">Read</span> <span class="nx">CustomerByName</span>
+            <span class="nx">If</span> <span class="p">(</span> <span class="nx">CustomerByName</span><span class="p">.</span><span class="nx">IsEof</span> <span class="p">)</span>
+                <span class="nx">Leave</span>
+            <span class="nx">EndIf</span>
+            <span class="nx">Write</span> <span class="nx">CustomerByNameMF</span>
+        <span class="nx">EndDo</span>
+
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">LastCMName</span> <span class="o">=</span> <span class="nx">CustomerByName_CMName</span>
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">LastCMCustNo</span> <span class="o">=</span> <span class="nx">CustomerByName_CMCustNo</span>
+
+        <span class="nx">CheckForMoreRecords</span><span class="p">()</span>
+        <span class="nx">LeaveSr</span> <span class="nx">CustomerByNameMF</span><span class="p">.</span><span class="nx">DataSet</span><span class="p">.</span><span class="nx">Tables</span><span class="p">[</span> <span class="mi">0</span> <span class="p">]</span>
+    <span class="nx">EndFunc</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p>Position the file pointer at a given key value (in this case name and number) 
+with SetLL to ensure the next record read is that record. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegFunc</span> <span class="nx">PositionTo</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Boolean</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">CMName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">CMCustNo</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+
+        <span class="nx">SetLL</span> <span class="nx">CustomerByName</span> <span class="nx">Key</span><span class="p">(</span><span class="nx">CMName</span><span class="p">,</span> <span class="nx">CMCustNo</span><span class="p">)</span> 
+        <span class="nx">LeaveSr</span> <span class="nx">CustomerByName</span><span class="p">.</span><span class="nx">IsFound</span><span class="p">()</span>
+    <span class="nx">EndFunc</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p>Position the file pointer at a given key value (in this case name and number)<br />
+with Chain to ensure the next read will be the record <strong>after</strong> the name and number 
+values given,. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegFunc</span> <span class="nx">PositionToNext</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Boolean</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">CMName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">CMCustNo</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+
+        <span class="nx">Chain</span> <span class="nx">CustomerByName</span> <span class="nx">Key</span><span class="p">(</span><span class="nx">CMName</span><span class="p">,</span> <span class="nx">CMCustNo</span><span class="p">)</span> 
+        <span class="nx">LeaveSr</span> <span class="nx">CustomerByName</span><span class="p">.</span><span class="nx">IsFound</span><span class="p">()</span>
+    <span class="nx">EndFunc</span> 
+
+    <span class="nx">BegSr</span> <span class="nx">PositionToFirst</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">SetLL</span> <span class="nx">CustomerByName</span> <span class="nx">Key</span><span class="p">(</span><span class="o">*</span><span class="nx">Start</span><span class="p">)</span> 
+    <span class="nx">EndSr</span> 
+
+
+    <span class="nx">BegSr</span> <span class="nx">CheckForMoreRecords</span> 
+        <span class="nx">SetGT</span> <span class="nx">CustomerByName</span> <span class="nx">Key</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">LastCMName</span><span class="p">,</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">LastCMCustNo</span><span class="p">)</span> 
+
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">HasMoreRecords</span> <span class="o">=</span> <span class="nx">CustomerByName</span><span class="p">.</span><span class="nx">IsFound</span>
+    <span class="nx">EndSr</span>
+
+<span class="nx">EndClass</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
