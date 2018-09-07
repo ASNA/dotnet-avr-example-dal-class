@@ -160,8 +160,8 @@ BegClass ListByName Access(*Public)
         *This.LastCMName = CustomerByName_CMName
         *This.LastCMCustNo = CustomerByName_CMCustNo
 
-        // Check to see if there are more records avaiable. 
-        //CheckForMoreRecords()
+        //- Check to see if there are more records avaiable. 
+        //- CheckForMoreRecords()
 
         // Read the next record to see if there are more records to read. 
         Read CustomerByName 
@@ -181,8 +181,8 @@ BegClass ListByName Access(*Public)
         LeaveSr CustomerByName.IsFound()
     EndFunc 
 
-    // Position the file pointer at a given key value (in this case name and number)  
-    // with Chain to ensure the next read will be the record *after* the name and number 
+    // Position the file pointer at a given key value (in this case name and number) with 
+    // `Chain` to ensure the next read will be the record *after* the name and number 
     // values given. 
     BegFunc PositionToNext Access(*Public) Type(*Boolean) 
         DclSrParm CMName Type(*String) 

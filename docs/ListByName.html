@@ -390,7 +390,10 @@ of customers. </p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">LastCMName</span> <span class="o">=</span> <span class="nx">CustomerByName_CMName</span>
-        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">LastCMCustNo</span> <span class="o">=</span> <span class="nx">CustomerByName_CMCustNo</span></pre></div>
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">LastCMCustNo</span> <span class="o">=</span> <span class="nx">CustomerByName_CMCustNo</span>
+
+        <span class="c1">// Check to see if there are more records avaiable. </span>
+        <span class="c1">// CheckForMoreRecords()</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -398,19 +401,6 @@ of customers. </p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-24'>#</a>
-      </div>
-      <p>Check to see if there are more records avaiable. 
-CheckForMoreRecords()</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-25'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-25'>#</a>
       </div>
       <p>Read the next record to see if there are more records to read. </p>
     </div>
@@ -420,10 +410,10 @@ CheckForMoreRecords()</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-26'>
+  <div class='section' id='section-25'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-26'>#</a>
+        <a class='octothorpe' href='#section-25'>#</a>
       </div>
       <p>Return a reference to the MemoryFile's zerroth table (its only table). </p>
     </div>
@@ -433,10 +423,10 @@ CheckForMoreRecords()</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-27'>
+  <div class='section' id='section-26'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-27'>#</a>
+        <a class='octothorpe' href='#section-26'>#</a>
       </div>
       <p>Position the file pointer at a given key value (in this case name and number) 
 with <code>SetLL</code> to ensure the next record read is that record. </p>
@@ -452,13 +442,13 @@ with <code>SetLL</code> to ensure the next record read is that record. </p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-28'>
+  <div class='section' id='section-27'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-28'>#</a>
+        <a class='octothorpe' href='#section-27'>#</a>
       </div>
-      <p>Position the file pointer at a given key value (in this case name and number)<br />
-with Chain to ensure the next read will be the record <em>after</em> the name and number 
+      <p>Position the file pointer at a given key value (in this case name and number) with 
+<code>Chain</code> to ensure the next read will be the record <em>after</em> the name and number 
 values given. </p>
     </div>
     <div class='code'>
@@ -472,10 +462,10 @@ values given. </p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-29'>
+  <div class='section' id='section-28'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-29'>#</a>
+        <a class='octothorpe' href='#section-28'>#</a>
       </div>
       <p>Position the file pointer at the top of the file. The next record read will be 
 the first record in the file. </p>
@@ -487,10 +477,10 @@ the first record in the file. </p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-30'>
+  <div class='section' id='section-29'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-30'>#</a>
+        <a class='octothorpe' href='#section-29'>#</a>
       </div>
       <p>Attempt to read the next record </p>
     </div>
