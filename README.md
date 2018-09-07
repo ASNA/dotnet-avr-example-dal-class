@@ -15,5 +15,6 @@ This class is an example of externalizing data access from an application. This 
 
 #### Annotated code
 
-[ListByName.vr - The AVR for .NET DAL class ](https://asna.github.io/dotnet-avr-example-dal-class/ListByName.html)
+* [ListByName.vr - The AVR for .NET DAL class ](https://asna.github.io/dotnet-avr-example-dal-class/ListByName.html)
+* [DBConnectList.vr - A DataGate database connect for C# coders](https://asna.github.io/dotnet-avr-example-dal-class/DBConnection.html)
 

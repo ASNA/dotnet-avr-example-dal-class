@@ -1,0 +1,57 @@
+﻿
+// <input action="action" onclick="window.history.go(-1); return false;" type="button" value="Back to members list" />
+// ---
+// This class surfaces an ASNA.VisualRPG.Runtime.Database. This is mostly intended for 
+// C# programmers so they can easily instance a DataGate DB connection--usually used to override
+// one in an AVR-provided class. 
+// ---
+
+// Namespace declarations.
+Using System
+Using System.Text
+
+DclNamespace FourWinds.Customer
+
+BegClass DBConnection Access(*Public)
+
+    // Declare the base DataGate DB connection. Note this isn't compiled with a 
+    // dataBase name. A database name is provided in either of this class's constructors.
+    DclDB pgmDB Access(*Private)
+
+    // Create this object with a database name, using that database name's user and 
+    // password. 
+    BegConstructor Access(*Public) 
+        DclSrParm DBName Type(*String) 
+
+        *This.pgmDB.DBName = DBName 
+    EndConstructor            
+
+    // Create this object with a database name, a user, and a password.
+    BegConstructor Access(*Public) 
+        DclSrParm DBName Type(*String) 
+        DclSrParm User Type(*String) 
+        DclSrParm Password Type(*String) 
+
+        *This.pgmDB.DBName = DBName 
+        *This.pgmDB.User = User
+        *This.pgmDB.Password = Password
+    EndConstructor            
+
+    // This property 'exports' the pgmDB object to consumers.        
+    BegProp Connection Type(ASNA.VisualRPG.Runtime.Database) Access(*Public) 
+        BegGet 
+            LeaveSr *This.pgmDB
+        EndGet 
+    EndProp 
+
+    // Connect the DB connection.
+    BegSr ConnectDB Access(*Public)
+        Connect *This.pgmDB
+    EndSr
+    
+    // Disconnect the DB connection.
+    BegSr DisconnectDB Access(*Public)
+        Disconnect *This.pgmDB
+    EndSr
+
+EndClass

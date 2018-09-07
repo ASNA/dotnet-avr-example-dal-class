@@ -36,6 +36,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBConnection.vr">
+      <SubType>
+      </SubType>
+    </Compile>
     <Compile Include="ListByName.vr" />
     <Compile Include="Properties\AssemblyInfo.vr" />
   </ItemGroup>
